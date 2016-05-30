@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang=''>
+<head>
+   {% block head %}
+   <meta charset='utf-8'>
+   <script src="{{ url_for('static', filename ='jquery-latest.min.js') }}" type="text/javascript"></script>
+   <script src="{{ url_for('static', filename='socket.io.min.js') }}" type="text/javascript"></script>
+
+   <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+   <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+   
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+   
+   {% endblock %}
+
+   <title>{% block title %}
+      -Docker Monitoring
+      {% endblock %}
+   </title>
+</head>
+<body>
+
+   <div id='cssmenu'>
+      <ul>
+         <li class=""><a href='/home'>Home</a></li>
+         <li class=""><a href='/compare_resources'>Compare</a></li>
+         <li class=""><a href='/threshold'>Thresholds</a></li>
+         <li class=""><a href='/error_report'>Error/Reports</a></li>
+      </ul>
+   </div>
+
+   <div id="side_nav">
+      <ul id="sidebar_hosts">
+      </ul>
+   </div>
+
+   <div id="loading"></div>
+   <div id="page">
+      <div id="content">
+         {% block content %}{% endblock %}
+      </div><br><br>
+
+      <div id="footer">
+         {% block footer %}
+            &copy; <a href="http://viper.apradar.com/">Sachin</a>.
+         {% endblock %}
+      </div>
+   </div>
+
+   <script src="{{ url_for('static', filename ='myscript.js') }}" type="text/javascript"></script>
+
+
+</body>
+<html>
