@@ -1,7 +1,7 @@
 var chart_memory, chart_cpu, chart_network;
 var socket;
 
-var memory_data = [], cpu_data = [], network_data = [];
+var memory_data = [], cpu_data = [], network_data_sent = [], network_data_recv = [];
 
 var pc_count;
 
@@ -30,7 +30,8 @@ function requestData() {
               //chart.series[1].data[i] = y;//addPoint(y, true, shift);
         
               y = pc_data.network;
-              network_data[i] = y;
+              network_data_sent[i] = y.sent;
+              network_data_recv[i] = y.recv;
               //chart.series[2].data[i] = y;//addPoint(y, true, shift);
     
         }
@@ -39,7 +40,8 @@ function requestData() {
     
         chart_cpu.series[0].setData(cpu_data);
         chart_memory.series[0].setData(memory_data);
-        chart_network.series[0].setData(network_data);
+        chart_network.series[0].setData(network_data_sent);
+        chart_network.series[1].setData(network_data_recv);
     
         chart_cpu.redraw();
         chart_memory.redraw();
@@ -70,138 +72,143 @@ function render_chart() {
 
           memory_data.push(0);
           cpu_data.push(0);
-          network_data.push(0);
+          network_data_sent.push(0);
+          network_data_recv.push(0);
         }
     
         console.log("PC names: " + pc_names);
 
         chart_cpu = new Highcharts.Chart({
-        chart: {
-            renderTo: 'compare_cpu_chart',
-            type: 'column'
-        },
-        title: {
-            text: 'CPU Comparison'
-        },
-        xAxis: {
-            categories:pc_names,
-            crosshair: true
-        },
-        yAxis: {
-            min: 0,
+            chart: {
+                renderTo: 'compare_cpu_chart',
+                type: 'column'
+            },
             title: {
-                text: 'Usage'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
-        series: [{
-            name: 'Cpu',
-            data: default_values
-
-        }]
-    });
-
-    //Memory Chart
-
-    chart_memory = new Highcharts.Chart({
-        chart: {
-            renderTo: 'compare_memory_chart',
-            type: 'column'
-        },
-        title: {
-            text: 'Memory Comparison'
-        },
-        xAxis: {
-            categories:pc_names,
-            crosshair: true
-        },
-        yAxis: {
-            min: 0,
+                text: 'CPU Comparison'
+            },
+            xAxis: {
+                categories:pc_names,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Usage (%)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Cpu',
+                data: default_values
+    
+            }]
+        });
+    
+        //Memory Chart
+    
+        chart_memory = new Highcharts.Chart({
+            chart: {
+                renderTo: 'compare_memory_chart',
+                type: 'column'
+            },
             title: {
-                text: 'Usage'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
-        series: [{
-            name: 'Memory',
-            data: default_values
-
-        }]
-    });
-
-
-    //Netwok Usage
-    chart_network = new Highcharts.Chart({
-        chart: {
-            renderTo: 'compare_network_chart',
-            type: 'column'
-        },
-        title: {
-            text: 'Network Comparison'
-        },
-        xAxis: {
-            categories:pc_names,
-            crosshair: true
-        },
-        yAxis: {
-            min: 0,
+                text: 'Memory Comparison'
+            },
+            xAxis: {
+                categories:pc_names,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Usage (%)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Memory',
+                data: default_values
+    
+            }]
+        });
+    
+    
+        //Netwok Usage
+        chart_network = new Highcharts.Chart({
+            chart: {
+                renderTo: 'compare_network_chart',
+                type: 'column'
+            },
             title: {
-                text: 'Usage'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
-        series: [{
-            name: 'Netwok',
-            data: default_values
-
-        }]
-    });
+                text: 'Network Comparison'
+            },
+            xAxis: {
+                categories:pc_names,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Usage (Bytes)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} bytes</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Sent',
+                data: default_values
+    
+            },
+            {
+                name: 'Received',
+                data: default_values
+            }]
+        });
 
 
       requestData();
 
-
       });
 }
+
 
 function initialise_graphs(){
   console.log("Into the initialise phase");

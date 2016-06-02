@@ -52,9 +52,12 @@ function get_connected_hosts(){
         //console.log('Got container_id : ' + data);
 
         data = JSON.parse(data);
+        var base_url = window.location.href;
+        var url_arr = base_url.split("/");
+        var result = url_arr[0] + "//" + url_arr[2] + "/static/pc.png";
 
         $.each(data, function (index, value) {
-          $('#sidebar_hosts').append('<li id = "id" onclick="host_info(' + value.ip + ')"><img height="40" width="40" src="static/pc.png"><a><font size="5">' + value.ip + '</font></a></li>');
+          $('#sidebar_hosts').append('<li id = "id" onclick="host_info(' + value.ip + ')"><img height="40" width="40" src="' + result +'"><a><font size="5">' + value.ip + '</font></a></li>');
         });
     });
 }

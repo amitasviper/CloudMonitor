@@ -25,8 +25,11 @@ function get_data()
       //console.log("The x and y values are : " + x + "  "+ y);
       cpu_series[0].addPoint([x, y], true, true);
 
-      y = data.network;
-      network_series[0].addPoint([x, y], true, true);
+      y = data.network.sent;
+      network_series[0].addPoint([x, y], false, true);
+
+      y = data.network.recv;
+      network_series[1].addPoint([x, y], true, true);
 
     });
 
@@ -58,6 +61,12 @@ function render_chart(container_name, series_name, json_key) {
         useUTC: false
       }
     });
+
+
+    var y_axis_name = "Percent";
+    if (json_key == "network_stats") {
+      y_axis_name = "Bytes";
+    };
 
     $(container_name).highcharts({
       chart: {
@@ -92,7 +101,7 @@ function render_chart(container_name, series_name, json_key) {
                   },
                   yAxis: {
                     title: {
-                      text: 'Value'
+                      text: y_axis_name
                     },
                     plotLines: [{
                       value: 0,
@@ -120,12 +129,23 @@ function render_chart(container_name, series_name, json_key) {
 
 function create_series_array(json_key){
   var size = 1;
+  if (json_key == 'network_stats') 
+    {
+      size = 2;
+    };
+  
+  var network_type = ['Sent', 'Received'];
+
   console.log("Generating series for " + json_key);
 
   var temp_series = [];
   for (j = 0; j <size; j += 1){
+    var line_name = friendly_name[json_key] + '(%)';
+      if (json_key == 'network_stats') {
+        line_name = friendly_name[json_key] + " : " + network_type[j];
+      };
     instance_series = {
-      name: friendly_name[json_key] + ' #' + j,
+      name: line_name,
       data: (function () {
                     // generate an array of random data
                     var data = [],
