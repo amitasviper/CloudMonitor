@@ -1,6 +1,6 @@
 
-var memory_series, cpu_series, network_series;
-var friendly_name = {'cpu_stats': 'CPU Usage', 'memory_stats' : 'Memory Usage', 'network_stats' : 'Network Usage'};
+var memory_series, cpu_series, network_series, disk_series;
+var friendly_name = {'cpu_stats': 'CPU Usage', 'memory_stats' : 'Memory Usage', 'network_stats' : 'Network Usage', 'disk_stats' : 'Disk Usage'};
 var socket, cpu_count=1;
 function get_data()
 {
@@ -25,6 +25,10 @@ function get_data()
       //console.log("The x and y values are : " + x + "  "+ y);
       cpu_series[0].addPoint([x, y], true, true);
 
+      y = data.disk;
+      //console.log("The x and y values are : " + x + "  "+ y);
+      disk_series[0].addPoint([x, y], true, true);
+
       y = data.network.sent;
       network_series[0].addPoint([x, y], false, true);
 
@@ -41,6 +45,7 @@ function initialise_graphs(){
   render_chart("#memory_usage_chart", memory_series, 'memory_stats');
   render_chart("#cpu_usage_chart", cpu_series, 'cpu_stats');
   render_chart("#network_usage_chart", network_series, 'network_stats');
+  render_chart("#disk_usage_chart", disk_series, 'disk_stats');
 
   get_data();
 }
@@ -83,6 +88,10 @@ function render_chart(container_name, series_name, json_key) {
                         else if( json_key == 'memory_stats')
                         {
                           memory_series = this.series;
+                        }
+                        else if( json_key == 'disk_stats')
+                        {
+                          disk_series = this.series;
                         }
                         else if (json_key == 'network_stats') 
                         {

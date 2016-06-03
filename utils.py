@@ -13,11 +13,14 @@ def get_memory_details():
 def network_usage():
 	return {'sent' :net_io_counters(pernic=False).bytes_sent, 'recv' :net_io_counters(pernic=False).bytes_recv}
 
+def get_disk_usage():
+	return disk_usage('/').percent
+
 @app.route('/')
 def home():
-	data = {'cpu' : get_cpu_usage(), 'memory' : get_memory_details(), 'network' :network_usage()}
+	data = {'cpu' : get_cpu_usage(), 'memory' : get_memory_details(), 'network' :network_usage(), 'disk' : get_disk_usage()}
 	return json.dumps(data)
 
 if __name__ == "__main__":
 	app.debug = True
-	app.run('', port=3000)
+	app.run('', port=3000, threaded=True)

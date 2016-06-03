@@ -1,7 +1,7 @@
-var chart_memory, chart_cpu, chart_network;
+var chart_memory, chart_cpu, chart_network, chart_disk;
 var socket;
 
-var memory_data = [], cpu_data = [], network_data_sent = [], network_data_recv = [];
+var memory_data = [], cpu_data = [], network_data_sent = [], network_data_recv = [], disk_data = [];
 
 var pc_count;
 
@@ -33,6 +33,9 @@ function requestData() {
               network_data_sent[i] = y.sent;
               network_data_recv[i] = y.recv;
               //chart.series[2].data[i] = y;//addPoint(y, true, shift);
+
+              y = pc_data.disk;
+              disk_data[i] = y;
     
         }
     
@@ -42,10 +45,12 @@ function requestData() {
         chart_memory.series[0].setData(memory_data);
         chart_network.series[0].setData(network_data_sent);
         chart_network.series[1].setData(network_data_recv);
+        chart_disk.series[0].setData(disk_data);
     
         chart_cpu.redraw();
         chart_memory.redraw();
         chart_network.redraw();
+        chart_disk.redraw();
 
     });
 
@@ -202,6 +207,48 @@ function render_chart() {
                 data: default_values
             }]
         });
+
+
+        //Disk Chart
+        chart_disk = new Highcharts.Chart({
+            chart: {
+                renderTo: 'compare_disk_chart',
+                type: 'column'
+            },
+            title: {
+                text: 'Disk Comparison'
+            },
+            xAxis: {
+                categories:pc_names,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Usage (%)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Disk',
+                data: default_values
+    
+            }]
+        });
+        
 
 
       requestData();

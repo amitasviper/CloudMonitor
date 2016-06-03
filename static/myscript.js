@@ -57,7 +57,7 @@ function get_connected_hosts(){
         var result = url_arr[0] + "//" + url_arr[2] + "/static/pc.png";
 
         $.each(data, function (index, value) {
-          $('#sidebar_hosts').append('<li id = "id" onclick="host_info(' + value.ip + ')"><img height="40" width="40" src="' + result +'"><a><font size="5">' + value.ip + '</font></a></li>');
+          $('#sidebar_hosts').append('<li id = "id"><img height="40" width="40" src="' + result +'"><a href="javascript:host_info(\'' + value.ip + '\')"><font size="5">' + value.ip + '</font></a></li>');
         });
     });
 }
