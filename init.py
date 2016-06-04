@@ -1,3 +1,11 @@
+CONNECTED_HOSTS = ['localhost'] #, '192.168.144.136', '192.168.144.140', '192.168.144.224']
+CLIENT_PORT = '3000'
+
+ADMIN_EMAILS = ['amitasviper@gmail.com', 'shankarsharma460@gmail.com']
+
+THRESHOLDS = {'cpu' : 10, 'memory' : 80, 'network_sent' : 1000000000, 'network_recv' : 1000000000 }
+
+
 async_mode = None
 
 if async_mode is None:
@@ -29,16 +37,11 @@ elif async_mode == 'gevent':
 from flask import Flask, render_template, url_for, request, jsonify, Response, copy_current_request_context
 import random, time, json, urllib2, requests
 
-import ast
+import ast, mailutils
 
 from flask_socketio import SocketIO, send, emit
 
 from threading import Thread
-
-CONNECTED_HOSTS = ['localhost'] #, '192.168.144.136', '192.168.144.140', '192.168.144.224']
-CLIENT_PORT = '3000'
-
-THRESHOLDS = {'cpu' : 10, 'memory' : 80, 'network_sent' : 1000000000, 'network_recv' : 1000000000 }
 
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
@@ -49,21 +52,39 @@ def monitor_in_background():
 	while True:
 		data = collect_hosts_data()
 		for host in data:
+			alert = False
+			mailData = ""
 			host = ast.literal_eval(json.dumps(host))
 			if host['cpu'] > THRESHOLDS['cpu']:
+				alert = True
 				print "CPU usage alert from ", host['ip']
+				mailData += "Alert Type : CPU Threshold \n"
+				mailData += "Current CPU Usage : " + str(host['cpu']) + "%\n\n\n"
 
 			if host['memory'] > THRESHOLDS['memory']:
+				alert = True
 				print "Memory usage alert from ", host['ip']
+				mailData += "Alert Type : Memory Threshold \n"
+				mailData += "Current Memory Usage : " + str(host['memory']) + "%\n\n\n"
 
 			if host['network']['recv'] > THRESHOLDS['network_recv']:
+				alert = True
 				print "Network Received usage alert from ", host['ip']
+				mailData += "Alert Type : Network Recv Threshold \n"
+				mailData += "Current Net Received Usage : " + str(host['network']['recv']) + " bytes\n\n\n"
 				THRESHOLDS['network_recv'] += 10000000	#increase in 10Mb on threashold
 
 			if host['network']['sent'] > THRESHOLDS['network_sent']:
+				alert = True
 				print "Network Sent usage alert from ", host.ip
+				mailData += "Alert Type : Network Sent Threshold \n"
+				mailData += "Current Net Sent Usage : " + str(host['network']['sent']) + " bytes\n\n\n"
 				THRESHOLDS['network_sent'] += 10000000	#increase in 10Mb on threashold
-			
+			if alert:
+				pc_details = "Client Name : " + str(host['ip']) + "\n"
+				pc_details += mailData
+				mailutils.sendEmail(ADMIN_EMAILS, pc_details)
+
 		#socketio.emit('channel_compare_resources_resp', json.dumps(data))
 		time.sleep(1)
 
