@@ -1,7 +1,7 @@
-CONNECTED_HOSTS = ['localhost'] #, '192.168.144.136', '192.168.144.140', '192.168.144.224']
+CONNECTED_HOSTS = ['localhost', '192.168.199.194'] #, '192.168.144.136', '192.168.144.140', '192.168.144.224']
 CLIENT_PORT = '3000'
 
-ADMIN_EMAILS = ['amitasviper@gmail.com', 'shankarsharma460@gmail.com']
+ADMIN_EMAILS = ['shankarsharma460@gmail.com']
 
 THRESHOLDS = {'cpu' : 10, 'memory' : 80, 'network_sent' : 1000000000, 'network_recv' : 1000000000 }
 
