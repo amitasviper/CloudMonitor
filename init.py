@@ -1,7 +1,7 @@
-CONNECTED_HOSTS = ['localhost', '192.168.199.194'] #, '192.168.144.136', '192.168.144.140', '192.168.144.224']
-CLIENT_PORT = '3000'
+CONNECTED_HOSTS = ['localhost'] #, '192.168.144.136', '192.168.144.140', '192.168.144.224']
+CLIENT_PORT = '4005'
 
-ADMIN_EMAILS = ['shankarsharma460@gmail.com']
+ADMIN_EMAILS = ['amitasviper@gmail.com']
 
 THRESHOLDS = {'cpu' : 10, 'memory' : 80, 'network_sent' : 1000000000, 'network_recv' : 1000000000 }
 
@@ -76,7 +76,7 @@ def monitor_in_background():
 
 			if host['network']['sent'] > THRESHOLDS['network_sent']:
 				alert = True
-				print "Network Sent usage alert from ", host.ip
+				print "Network Sent usage alert from ", host['ip']
 				mailData += "Alert Type : Network Sent Threshold \n"
 				mailData += "Current Net Sent Usage : " + str(host['network']['sent']) + " bytes\n\n\n"
 				THRESHOLDS['network_sent'] += 10000000	#increase in 10Mb on threashold

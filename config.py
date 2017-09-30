@@ -1,2 +1,2 @@
-CONNECTED_HOSTS = ['localhost']
+CONNECTED_HOSTS = ['localhost', '192.168.1.13']
 CLIENT_PORT = '3000'
